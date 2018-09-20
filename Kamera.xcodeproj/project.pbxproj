@@ -477,10 +477,10 @@
 				INFOPLIST_FILE = task30/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.priorit.diakonie.kamerad;
+				PRODUCT_BUNDLE_IDENTIFIER = com.efusion.meancam;
 				PRODUCT_NAME = Kamera;
-				PROVISIONING_PROFILE = "87c13e81-afe9-4809-92d7-c985b95f06bd";
-				PROVISIONING_PROFILE_SPECIFIER = dev_profile4_atama_bijin_app;
+				PROVISIONING_PROFILE = "ad8bbde0-75e8-4ab3-9475-484b336d3058";
+				PROVISIONING_PROFILE_SPECIFIER = meaCamDev;
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -496,10 +496,10 @@
 				INFOPLIST_FILE = task30/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.priorit.diakonie.kamerad;
+				PRODUCT_BUNDLE_IDENTIFIER = com.efusion.meancam;
 				PRODUCT_NAME = Kamera;
-				PROVISIONING_PROFILE = "4f078e33-caf4-4a77-86a8-2a541ac67633";
-				PROVISIONING_PROFILE_SPECIFIER = adhoc_profile4_atama_bijin;
+				PROVISIONING_PROFILE = "d62b2afa-9ae8-4206-af12-e50ccc24a7a4";
+				PROVISIONING_PROFILE_SPECIFIER = meaCamAdHoc;
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
