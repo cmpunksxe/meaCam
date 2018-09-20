@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="ipad9_7" orientation="landscape">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="Kamera" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Izf-gV-dQs">
+                                <rect key="frame" x="200" y="10" width="187" height="187"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="Izf-gV-dQs" secondAttribute="height" multiplier="1:1" id="pgl-ru-ueb"/>
+                                </constraints>
+                                <state key="normal" backgroundImage="camera.png"/>
+                                <connections>
+                                    <action selector="takePhoto:" destination="BYZ-38-t0r" eventType="touchUpInside" id="qtt-OR-JKv"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BLT-vD-1xN">
+                                <rect key="frame" x="200" y="207" width="187" height="187"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="BLT-vD-1xN" secondAttribute="height" multiplier="1:1" id="rI9-z1-yNp"/>
+                                </constraints>
+                                <state key="normal" backgroundImage="video.png">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="recordVideo:" destination="BYZ-38-t0r" eventType="touchUpInside" id="alj-Mk-WKG"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0MR-uP-VNI">
+                                <rect key="frame" x="200" y="404" width="187" height="187"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="0MR-uP-VNI" secondAttribute="height" multiplier="1:1" id="Q6t-ma-37q"/>
+                                </constraints>
+                                <state key="normal" backgroundImage="albumd.png"/>
+                                <connections>
+                                    <action selector="albumButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="sYo-tz-meQ"/>
+                                </connections>
+                            </button>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8wz-UU-Pti">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="601"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </view>
+                    <connections>
+                        <outlet property="albumButton" destination="0MR-uP-VNI" id="1hA-mX-9kF"/>
+                        <outlet property="fullScreenView" destination="8wz-UU-Pti" id="lCb-de-xFw"/>
+                        <outlet property="recordButton" destination="BLT-vD-1xN" id="TgG-gk-QpG"/>
+                        <outlet property="takephoto" destination="Izf-gV-dQs" id="Atd-RM-Msj"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="166" y="356"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="albumd.png" width="720" height="720"/>
+        <image name="camera.png" width="720" height="720"/>
+        <image name="video.png" width="720" height="720"/>
+    </resources>
+</document>
