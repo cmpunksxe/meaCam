@@ -13,6 +13,9 @@ import Photos
 
 class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
     
+    
+    // swich camera button
+    var switchCamera : UIButton!
     // take photo button
     @IBOutlet weak var takephoto: UIButton!
     // record button
@@ -93,8 +96,17 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
     private var gestureFullScreenView: UITapGestureRecognizer!
     
     
+//    func setUpSwitchCameraButton()-> Void {
+//
+//        self.switchCamera = UIButton(frame:CGRect(x:(self.view.frame.size.width-150),y:0,width: 150,height: 150))
+//        self.switchCamera.setImage(UIImage (named: "swap.png"), for: .normal)
+//        //self.returnButton.addTarget(self, action: #selector(returnButtonPressed), for: .touchUpInside)
+//    }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         
         self.fullScreenView.isHidden = true
         
@@ -324,6 +336,13 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         fullScreenView.frame = view.bounds
         videoPreviewLayer.frame = fullScreenView.bounds
         fullScreenView.layer.addSublayer(videoPreviewLayer)
+        //Emon
+        self.switchCamera = UIButton(frame:CGRect(x:(self.view.frame.size.width-150),y:0,width: 150,height: 150))
+        self.switchCamera.setImage(UIImage (named: "swap.png"), for: .normal)
+        self.switchCamera.addTarget(self, action: #selector(swapCamera), for: .touchUpInside)
+        fullScreenView.addSubview(self.switchCamera)
+        
+        
         
         // add action to fullscreen view
         gestureFullScreenView = UITapGestureRecognizer(target: self, action: #selector(takePhoto(_:)))
@@ -375,6 +394,59 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         }
     }
     
+    func swapCamera() {
+        
+        // Get current input
+        guard let input = session.inputs[0] as? AVCaptureDeviceInput else { return }
+        
+        // Begin new session configuration and defer commit
+        session.beginConfiguration()
+        defer { session.commitConfiguration() }
+        
+        // Create new capture device
+        var newDevice: AVCaptureDevice?
+        if input.device.position == .back {
+            newDevice = captureDevice(with: .front)
+        } else {
+            newDevice = captureDevice(with: .back)
+        }
+        
+        // Create new capture input
+        var deviceInput: AVCaptureDeviceInput!
+        do {
+            deviceInput = try AVCaptureDeviceInput(device: newDevice)
+        } catch let error {
+            print(error.localizedDescription)
+            return
+        }
+        
+        // Swap capture device inputs
+        session.removeInput(input)
+        session.addInput(deviceInput)
+    }
+    
+    func captureDevice(with position: AVCaptureDevicePosition) -> AVCaptureDevice? {
+        
+        if #available(iOS 10.2, *) {
+            let devices = AVCaptureDeviceDiscoverySession(deviceTypes: [ .builtInWideAngleCamera, .builtInMicrophone, .builtInDualCamera, .builtInTelephotoCamera ], mediaType: AVMediaTypeVideo, position: .unspecified).devices
+            
+            if let devices = devices {
+                for device in devices {
+                    if device.position == position {
+                        return device
+                    }
+                }
+            }
+            
+        } else {
+            // Fallback on earlier versions
+        }
+        
+        
+        
+        return nil
+    }
+    
     private func getImageOrientation() -> UIImageOrientation {
         var orientation: UIImageOrientation!
         
@@ -416,6 +488,14 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         fullScreenView.frame = view.bounds
         videoPreviewLayer.frame = fullScreenView.bounds
         fullScreenView.layer.addSublayer(videoPreviewLayer)
+        
+        //Emon
+        self.switchCamera = UIButton(frame:CGRect(x:(self.view.frame.size.width-150),y:0,width: 150,height: 150))
+        self.switchCamera.setImage(UIImage (named: "swap.png"), for: .normal)
+        self.switchCamera.addTarget(self, action: #selector(swapCamera), for: .touchUpInside)
+        fullScreenView.addSubview(self.switchCamera)
+        
+        
         
         // add action to fullScreenView
         gestureFullScreenView = UITapGestureRecognizer(target: self, action: #selector(recordVideo(_:)))

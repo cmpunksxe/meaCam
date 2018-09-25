@@ -27,6 +27,7 @@
 		9CC64D7320EC808F00125D72 /* PHPhotoLibrary+SaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CC64D7220EC808F00125D72 /* PHPhotoLibrary+SaveImage.swift */; };
 		9CC64D7520ECD53500125D72 /* no_picture.png in Resources */ = {isa = PBXBuildFile; fileRef = 9CC64D7420ECD53500125D72 /* no_picture.png */; };
 		9CD949AD20E9F61100BFFBC5 /* albumd.png in Resources */ = {isa = PBXBuildFile; fileRef = 9CD949AC20E9F61100BFFBC5 /* albumd.png */; };
+		B34307062153800000F77B49 /* swap.png in Resources */ = {isa = PBXBuildFile; fileRef = B34307052153800000F77B49 /* swap.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,6 +74,7 @@
 		9CC64D7220EC808F00125D72 /* PHPhotoLibrary+SaveImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PHPhotoLibrary+SaveImage.swift"; sourceTree = "<group>"; };
 		9CC64D7420ECD53500125D72 /* no_picture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = no_picture.png; sourceTree = "<group>"; };
 		9CD949AC20E9F61100BFFBC5 /* albumd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = albumd.png; sourceTree = "<group>"; };
+		B34307052153800000F77B49 /* swap.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = swap.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -156,6 +158,7 @@
 		6385A0A21D02187000E12E89 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				B34307052153800000F77B49 /* swap.png */,
 				9CC64D7420ECD53500125D72 /* no_picture.png */,
 				9C89B8C720EB95AD00312A50 /* splash_screen.png */,
 				9C89B8C520EB2D1600312A50 /* exit.png */,
@@ -287,6 +290,7 @@
 				637B9E331D01DD8100E6E71F /* Main.storyboard in Resources */,
 				7E0BC2D01D4F4420007CD9FE /* camera.png in Resources */,
 				7E3277FF1D3E2A2D003973E0 /* video_icon.png in Resources */,
+				B34307062153800000F77B49 /* swap.png in Resources */,
 				9C89B8C820EB95AD00312A50 /* splash_screen.png in Resources */,
 				9C89B8C620EB2D1600312A50 /* exit.png in Resources */,
 				9CC64D7520ECD53500125D72 /* no_picture.png in Resources */,
