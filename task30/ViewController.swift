@@ -16,6 +16,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
     
     // swich camera button
     var switchCamera : UIButton!
+    var input : AVCaptureDeviceInput!
     // take photo button
     @IBOutlet weak var takephoto: UIButton!
     // record button
@@ -94,6 +95,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
     private var gestureView: UITapGestureRecognizer!
     // gesture recognizer for the fullscreenview
     private var gestureFullScreenView: UITapGestureRecognizer!
+//    var isSwitchCameraButtonAdded : Bool!
     
     
 //    func setUpSwitchCameraButton()-> Void {
@@ -108,6 +110,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         super.viewDidLoad()
         
         
+       // self.switchCamera.isHidden = true
         self.fullScreenView.isHidden = true
         
         // set the device in portrait mode at the beginning to get the height and width
@@ -160,6 +163,8 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
                 self.videoPreviewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
             }
         }
+        
+        
     }
     
     // rotate the video preview and the time counter label if the device orientation changes
@@ -192,6 +197,8 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         }
         
         self.setOrientation()
+        addSwichCameraButton()
+        hideSwitchCameraButton()
         
     }
     
@@ -316,6 +323,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
     
     // take a photo
     @IBAction func takePhoto(_ sender: AnyObject) {
+        showSwitchCameraButton()
         self.fullScreenView.isHidden = false
         self.recordButton.isEnabled = false
         self.takephoto.isEnabled = false
@@ -323,7 +331,6 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         self.recordButton.isHidden = true
         self.takephoto.isHidden = true
         self.albumButton.isHidden = true
-        
         session.startRunning()
         
         self.fullScreenView.backgroundColor = UIColor.black
@@ -337,11 +344,13 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         videoPreviewLayer.frame = fullScreenView.bounds
         fullScreenView.layer.addSublayer(videoPreviewLayer)
         //Emon
-        self.switchCamera = UIButton(frame:CGRect(x:(self.view.frame.size.width-150),y:0,width: 150,height: 150))
-        self.switchCamera.setImage(UIImage (named: "swap.png"), for: .normal)
-        self.switchCamera.addTarget(self, action: #selector(swapCamera), for: .touchUpInside)
-        fullScreenView.addSubview(self.switchCamera)
-        
+         // addSwichCameraButton()
+//        self.switchCamera = UIButton(frame:CGRect(x:(self.view.frame.size.width-150),y:0,width: 150,height: 150))
+//        self.switchCamera.setImage(UIImage (named: "swap.png"), for: .normal)
+//        self.switchCamera.addTarget(self, action: #selector(swapCamera), for: .touchUpInside)
+//        self.switchCamera.removeFromSuperview()
+//        fullScreenView.addSubview(self.switchCamera)
+//
         
         
         // add action to fullscreen view
@@ -397,7 +406,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
     func swapCamera() {
         
         // Get current input
-        guard let input = session.inputs[0] as? AVCaptureDeviceInput else { return }
+        input = session.inputs[0] as? AVCaptureDeviceInput
         
         // Begin new session configuration and defer commit
         session.beginConfiguration()
@@ -412,18 +421,25 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         }
         
         // Create new capture input
-        var deviceInput: AVCaptureDeviceInput!
+        //videoInput : AVCaptureDeviceInput!
         do {
-            deviceInput = try AVCaptureDeviceInput(device: newDevice)
+            videoInput = try AVCaptureDeviceInput(device: newDevice)
         } catch let error {
             print(error.localizedDescription)
             return
         }
         
         // Swap capture device inputs
+    
         session.removeInput(input)
-        session.addInput(deviceInput)
+        session.addInput(videoInput)
+        
+        self.controlView?.addGestureRecognizer(self.tapGestureAlbum)
+        
+        
     }
+    
+    
     
     func captureDevice(with position: AVCaptureDevicePosition) -> AVCaptureDevice? {
         
@@ -468,6 +484,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
     
     // record a video
     @IBAction func recordVideo(_ sender: AnyObject) {
+        showSwitchCameraButton()
         self.fullScreenView.isHidden = false
         self.recordButton.isEnabled = false
         self.takephoto.isEnabled = false
@@ -475,8 +492,8 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         self.recordButton.isHidden = true
         self.takephoto.isHidden = true
         self.albumButton.isHidden = true
-        
-        session.startRunning()
+       
+//        session.startRunning()
         
         self.fullScreenView.backgroundColor = UIColor.black
         self.view.backgroundColor = UIColor.black
@@ -489,11 +506,9 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         videoPreviewLayer.frame = fullScreenView.bounds
         fullScreenView.layer.addSublayer(videoPreviewLayer)
         
-        //Emon
-        self.switchCamera = UIButton(frame:CGRect(x:(self.view.frame.size.width-150),y:0,width: 150,height: 150))
-        self.switchCamera.setImage(UIImage (named: "swap.png"), for: .normal)
-        self.switchCamera.addTarget(self, action: #selector(swapCamera), for: .touchUpInside)
-        fullScreenView.addSubview(self.switchCamera)
+        
+        
+        session.startRunning()
         
         
         
@@ -536,11 +551,50 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
             preview = true
             setGestureVideo = true
         }
+        
+        //Emon
+        //addSwichCameraButton()
+    }
+    
+    func  addSwichCameraButton(){
+        
+        if self.switchCamera != nil {
+            return
+        }
+        //Emon
+        self.switchCamera = UIButton(frame:CGRect(x:(self.view.frame.size.width-150),y:0,width: 150,height: 150))
+        self.switchCamera.setImage(UIImage (named: "swap.png"), for: .normal)
+        self.switchCamera.addTarget(self, action: #selector(swapCamera), for: .touchUpInside)
+        self.switchCamera.removeFromSuperview()
+        self.view.addSubview(self.switchCamera)
+         print("----------------------Added--------------")
+        
+    }
+    
+    func hideSwitchCameraButton(){
+        if self.switchCamera != nil {
+            DispatchQueue.main.async {
+                self.switchCamera.isHidden = true
+                print("----------------------Hidden--------------")
+            }
+        }
+    }
+    
+    func showSwitchCameraButton(){
+        if self.switchCamera != nil {
+            DispatchQueue.main.async {
+                self.switchCamera.isHidden = false
+                print("----------------------Shown--------------")
+            }
+            
+        }
     }
     
     // update the time label and afterwards repeat the video until
     // the user taps on the screen
     func update() {
+        //Emon
+        hideSwitchCameraButton()
         if(count < 10) {
             count = count + 1
             self.countLabel.text = "" + String(count) + "/10"
@@ -609,6 +663,14 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
     }
     
     @IBAction func albumButtonPressed(_ sender: AnyObject) {
+//        if self.switchCamera != nil {
+//            //Emon
+//            self.switchCamera.removeFromSuperview()
+//        }
+          session.stopRunning()
+          session.startRunning()
+
+
         //check photo access authorization
         let photos = PHPhotoLibrary.authorizationStatus()
         if photos == .notDetermined {
@@ -624,6 +686,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
     
     // show app captured photo & video
     private func showAlbum(){
+        
         self.fullScreenView.isHidden = false
         self.recordButton.isEnabled = false
         self.takephoto.isEnabled = false
@@ -775,6 +838,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         }
     }
     func updateAlbumTimer(){
+        
         if(self.countAlbumVideo > 1) {
             //update flag
             self.isPlaying = true
@@ -808,6 +872,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         self.albumButton.isEnabled = true
         self.takephoto.isHidden = false
         self.fullScreenView.isHidden = true
+        hideSwitchCameraButton()
         
         // removes the repeated video from the view
         if (checkRecorded == true) {
@@ -903,6 +968,14 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         if self.imageVideoArray.count<1{
             return
         }
+        
+        print("----------------------------------------------------")
+        print(UserDefaults.standard.integer(forKey: "album_counter"))
+        print("----------------------------------------------------")
+        session.stopRunning()
+        session.startRunning()
+        
+        
         var ischange: Bool!
         ischange = false
         if (gesture.direction == UISwipeGestureRecognizerDirection.right &&
