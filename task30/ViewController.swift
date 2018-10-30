@@ -95,6 +95,8 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
     private var gestureView: UITapGestureRecognizer!
     // gesture recognizer for the fullscreenview
     private var gestureFullScreenView: UITapGestureRecognizer!
+    var isSwapButtonAdded : Bool!
+    var isSwitchCamHidden = false
 //    var isSwitchCameraButtonAdded : Bool!
     
     
@@ -197,8 +199,13 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         }
         
         self.setOrientation()
+        
         addSwichCameraButton()
-        hideSwitchCameraButton()
+        if isSwapButtonAdded == nil{
+            hideSwitchCameraButton()
+            isSwapButtonAdded = true
+        }
+        
         
     }
     
@@ -375,13 +382,15 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
                         let image = UIImage(data: imageData!, scale: 1.0)
                         
                         
+                        //UIImage(cgImage:(image?.cgImage)!, scale: 1.0, orientation: .downMirrored)
                         // image with the current orientation
-                        let newImage = UIImage(cgImage: (image?.cgImage)!, scale: 1, orientation: self.getImageOrientation())
+                        let newImage = UIImage(cgImage:(image?.cgImage)!, scale: 1.0, orientation: .leftMirrored)//UIImage(cgImage: (image?.cgImage)!, scale: 1, orientation: self.getImageOrientation())
                         
                         // remove the gesture recognizer and stop the current session
                         self.fullScreenView.isHidden = true
                         self.fullScreenView.gestureRecognizers?.forEach(self.fullScreenView.removeGestureRecognizer)
                         self.session.stopRunning()
+                        
                         
                         // save image to the library
                         //UIImageWriteToSavedPhotosAlbum(newImage, nil, nil, nil)
@@ -393,6 +402,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
                         self.imageViewBackground.tag = self.key
                         
                         self.view.addSubview(self.imageViewBackground)
+                        self.hideSwitchCameraButton()
                     }
                 })
             }
@@ -556,22 +566,51 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         //addSwichCameraButton()
     }
     
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        if UIDevice.current.orientation.isLandscape {
+            print("Landscape")
+            
+        } else {
+            print("Portrait")
+        }
+        
+        addSwichCameraButton()
+        showSwitchCameraButton()
+    }
+    
     func  addSwichCameraButton(){
         
-        if self.switchCamera != nil {
-            return
+        if isSwitchCamHidden {
+            return 
         }
+        if self.switchCamera != nil {
+            //return
+            self.switchCamera.removeFromSuperview()
+        }
+        
+        
+//        do {
+//            self.switchCamera.removeFromSuperview()
+//        } catch {
+//
+//        }
+        
+        
+        
         //Emon
-        self.switchCamera = UIButton(frame:CGRect(x:(self.view.frame.size.width-150),y:0,width: 150,height: 150))
+        self.switchCamera = UIButton(frame:CGRect(x:(self.view.bounds.size.width-150),y:0,width: 150,height: 150))
         self.switchCamera.setImage(UIImage (named: "swap.png"), for: .normal)
         self.switchCamera.addTarget(self, action: #selector(swapCamera), for: .touchUpInside)
         self.switchCamera.removeFromSuperview()
         self.view.addSubview(self.switchCamera)
-         print("----------------------Added--------------")
+        print("----------------------Added--------------")
+       // self.view.bringSubview(toFront: self.switchCamera)
         
     }
     
     func hideSwitchCameraButton(){
+        self.isSwitchCamHidden = true
         if self.switchCamera != nil {
             DispatchQueue.main.async {
                 self.switchCamera.isHidden = true
@@ -581,7 +620,8 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
     }
     
     func showSwitchCameraButton(){
-        if self.switchCamera != nil {
+        self.isSwitchCamHidden = false
+        if self.switchCamera != nil{
             DispatchQueue.main.async {
                 self.switchCamera.isHidden = false
                 print("----------------------Shown--------------")
