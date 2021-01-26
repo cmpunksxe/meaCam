@@ -12,6 +12,10 @@ import AVKit
 import Photos
 
 class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
+    func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
+        
+    }
+    
     
     
     // swich camera button
@@ -73,7 +77,6 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
     private var count = 0
     private var player = AVPlayer()
     private var playerLayer: AVPlayerLayer!
-    private var playerConnection = AVCaptureConnection()
     private var countLabel = UILabel()
     private var setGestureVideo = false
     private var horizontalConstraintVideo: NSLayoutConstraint!
@@ -97,6 +100,8 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
     private var gestureFullScreenView: UITapGestureRecognizer!
     var isSwapButtonAdded : Bool!
     var isSwitchCamHidden = false
+    var isFirstRun = true
+
 //    var isSwitchCameraButtonAdded : Bool!
     
     
@@ -129,9 +134,9 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         countLabel.text = "10/10"
         
         // set the resolution of the output to high
-        session.sessionPreset = AVCaptureSessionPresetHigh
-        microphone = AVCaptureDevice.defaultDevice(withMediaType: AVMediaTypeAudio)
-        camera = AVCaptureDevice.defaultDevice(withMediaType: AVMediaTypeVideo)
+        session.sessionPreset = AVCaptureSession.Preset.high
+        microphone = AVCaptureDevice.default(for: .audio)
+        camera = AVCaptureDevice.default(for: .video)
         
         //setup tap recognizer
         tapGestureAlbum = UITapGestureRecognizer(target: self, action: #selector(controlViewDidTapped))
@@ -139,32 +144,32 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         
         
         var error: NSError?
-        do {
-            audioInput = try AVCaptureDeviceInput(device: microphone)
-            videoInput = try AVCaptureDeviceInput(device: camera)
-        } catch let error1 as NSError {
-            error = error1
-            audioInput = nil
-            videoInput = nil
-            print(error!.localizedDescription)
-        }
-        
-        if (error == nil && session.canAddInput(videoInput)) {
-            self.session.addInput(videoInput)
-            self.session.addOutput(videoFileOutput)
-            // the remainder of the session setup will go here...
-            
-            self.stillImageOutput = AVCaptureStillImageOutput()
-            self.stillImageOutput?.outputSettings = [AVVideoCodecKey: AVVideoCodecJPEG]
-            
-            if (session.canAddOutput(stillImageOutput)) {
-                self.session.addOutput(stillImageOutput)
-                
-                // configure the Live Preview here...
-                self.videoPreviewLayer = AVCaptureVideoPreviewLayer(session: session)
-                self.videoPreviewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
-            }
-        }
+//        do {
+//            audioInput = try AVCaptureDeviceInput(device: microphone)
+//            videoInput = try AVCaptureDeviceInput(device: camera)
+//        } catch let error1 as NSError {
+//            error = error1
+//            audioInput = nil
+//            videoInput = nil
+//            print(error!.localizedDescription)
+//        }
+//        
+//        if (error == nil && session.canAddInput(videoInput)) {
+//            self.session.addInput(videoInput)
+//            self.session.addOutput(videoFileOutput)
+//            // the remainder of the session setup will go here...
+//            
+//            self.stillImageOutput = AVCaptureStillImageOutput()
+//            self.stillImageOutput?.outputSettings = [AVVideoCodecKey: AVVideoCodecJPEG]
+//            
+//            if (session.canAddOutput(stillImageOutput)) {
+//                self.session.addOutput(stillImageOutput)
+//                
+//                // configure the Live Preview here...
+//                self.videoPreviewLayer = AVCaptureVideoPreviewLayer(session: session)
+//                self.videoPreviewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
+//            }
+//        }
         
         
     }
@@ -200,7 +205,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         
         self.setOrientation()
         
-        addSwichCameraButton()
+    //    addSwichCameraButton()
         if isSwapButtonAdded == nil{
             hideSwitchCameraButton()
             isSwapButtonAdded = true
@@ -221,31 +226,31 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
     
     // add constraints to the view to rotate the icons if the portrait is in landscape mode
     private func addConstraintsToLandscapeMode() {
-        horizontalConstraintPhoto = NSLayoutConstraint(item: takephoto, attribute: NSLayoutAttribute.centerX, relatedBy: NSLayoutRelation.equal, toItem: view, attribute: NSLayoutAttribute.centerX, multiplier: 0.335, constant: 0)
+        horizontalConstraintPhoto = NSLayoutConstraint(item: takephoto, attribute: NSLayoutConstraint.Attribute.centerX, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view, attribute: NSLayoutConstraint.Attribute.centerX, multiplier: 0.335, constant: 0)
         view.addConstraint(horizontalConstraintPhoto)
         
-        verticalConstraintPhoto = NSLayoutConstraint(item: takephoto, attribute: NSLayoutAttribute.centerY, relatedBy: NSLayoutRelation.equal, toItem: view, attribute: NSLayoutAttribute.centerY, multiplier: 1, constant: 0)
+        verticalConstraintPhoto = NSLayoutConstraint(item: takephoto, attribute: NSLayoutConstraint.Attribute.centerY, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view, attribute: NSLayoutConstraint.Attribute.centerY, multiplier: 1, constant: 0)
         view.addConstraint(verticalConstraintPhoto)
         
-        widthConstraintPhoto = NSLayoutConstraint(item: takephoto, attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: view, attribute: NSLayoutAttribute.width, multiplier: 0.30, constant: 0)
+        widthConstraintPhoto = NSLayoutConstraint(item: takephoto, attribute: NSLayoutConstraint.Attribute.width, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view, attribute: NSLayoutConstraint.Attribute.width, multiplier: 0.30, constant: 0)
         view.addConstraint(widthConstraintPhoto)
         
-        horizontalConstraintVideo = NSLayoutConstraint(item: recordButton, attribute: NSLayoutAttribute.centerX, relatedBy: NSLayoutRelation.equal, toItem: view, attribute: NSLayoutAttribute.centerX, multiplier: 1.0, constant: 0)
+        horizontalConstraintVideo = NSLayoutConstraint(item: recordButton, attribute: NSLayoutConstraint.Attribute.centerX, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view, attribute: NSLayoutConstraint.Attribute.centerX, multiplier: 1.0, constant: 0)
         view.addConstraint(horizontalConstraintVideo)
         
-        verticalConstraintVideo = NSLayoutConstraint(item: recordButton, attribute: NSLayoutAttribute.centerY, relatedBy: NSLayoutRelation.equal, toItem: view, attribute: NSLayoutAttribute.centerY, multiplier: 1, constant: 0)
+        verticalConstraintVideo = NSLayoutConstraint(item: recordButton, attribute: NSLayoutConstraint.Attribute.centerY, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view, attribute: NSLayoutConstraint.Attribute.centerY, multiplier: 1, constant: 0)
         view.addConstraint(verticalConstraintVideo)
         
-        widthConstraintVideo = NSLayoutConstraint(item: recordButton, attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: view, attribute: NSLayoutAttribute.width, multiplier: 0.30, constant: 0)
+        widthConstraintVideo = NSLayoutConstraint(item: recordButton, attribute: NSLayoutConstraint.Attribute.width, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view, attribute: NSLayoutConstraint.Attribute.width, multiplier: 0.30, constant: 0)
         view.addConstraint(widthConstraintVideo)
         
-        horizontalConstraintAlbum = NSLayoutConstraint(item: albumButton, attribute: NSLayoutAttribute.centerX, relatedBy: NSLayoutRelation.equal, toItem: view, attribute: NSLayoutAttribute.centerX, multiplier: 1.66, constant: 0)
+        horizontalConstraintAlbum = NSLayoutConstraint(item: albumButton, attribute: NSLayoutConstraint.Attribute.centerX, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view, attribute: NSLayoutConstraint.Attribute.centerX, multiplier: 1.66, constant: 0)
         view.addConstraint(horizontalConstraintAlbum)
         
-        verticalConstraintAlbum = NSLayoutConstraint(item: albumButton, attribute: NSLayoutAttribute.centerY, relatedBy: NSLayoutRelation.equal, toItem: view, attribute: NSLayoutAttribute.centerY, multiplier: 1, constant: 0)
+        verticalConstraintAlbum = NSLayoutConstraint(item: albumButton, attribute: NSLayoutConstraint.Attribute.centerY, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view, attribute: NSLayoutConstraint.Attribute.centerY, multiplier: 1, constant: 0)
         view.addConstraint(verticalConstraintAlbum)
         
-        widthConstraintAlbum = NSLayoutConstraint(item: albumButton, attribute: NSLayoutAttribute.width, relatedBy: NSLayoutRelation.equal, toItem: view, attribute: NSLayoutAttribute.width, multiplier: 0.30, constant: 0)
+        widthConstraintAlbum = NSLayoutConstraint(item: albumButton, attribute: NSLayoutConstraint.Attribute.width, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view, attribute: NSLayoutConstraint.Attribute.width, multiplier: 0.30, constant: 0)
         view.addConstraint(widthConstraintAlbum)
         
         rotateLandscapeIcons = true
@@ -253,32 +258,32 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
     
     // add constraints to the view to rotate the icons if the portrait is in portrait mode
     private func addConstraintsToPortraitMode() {
-        horizontalConstraintPhoto = NSLayoutConstraint(item: takephoto, attribute: NSLayoutAttribute.centerX, relatedBy: NSLayoutRelation.equal, toItem: view, attribute: NSLayoutAttribute.centerX, multiplier: 1, constant: 0)
+        horizontalConstraintPhoto = NSLayoutConstraint(item: takephoto, attribute: NSLayoutConstraint.Attribute.centerX, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view, attribute: NSLayoutConstraint.Attribute.centerX, multiplier: 1, constant: 0)
         view.addConstraint(horizontalConstraintPhoto)
         
-        verticalConstraintPhoto = NSLayoutConstraint(item: takephoto, attribute: NSLayoutAttribute.centerY, relatedBy: NSLayoutRelation.equal, toItem: view, attribute: NSLayoutAttribute.centerY, multiplier: 0.335, constant: 0)
+        verticalConstraintPhoto = NSLayoutConstraint(item: takephoto, attribute: NSLayoutConstraint.Attribute.centerY, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view, attribute: NSLayoutConstraint.Attribute.centerY, multiplier: 0.335, constant: 0)
         view.addConstraint(verticalConstraintPhoto)
         
-        heightConstraintPhoto = NSLayoutConstraint(item: takephoto, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal, toItem: view, attribute: NSLayoutAttribute.height, multiplier: 0.30, constant: 0)
+        heightConstraintPhoto = NSLayoutConstraint(item: takephoto, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view, attribute: NSLayoutConstraint.Attribute.height, multiplier: 0.30, constant: 0)
         view.addConstraint(heightConstraintPhoto)
         
-        horizontalConstraintVideo = NSLayoutConstraint(item: recordButton, attribute: NSLayoutAttribute.centerX, relatedBy: NSLayoutRelation.equal, toItem: view, attribute: NSLayoutAttribute.centerX, multiplier: 1, constant: 0)
+        horizontalConstraintVideo = NSLayoutConstraint(item: recordButton, attribute: NSLayoutConstraint.Attribute.centerX, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view, attribute: NSLayoutConstraint.Attribute.centerX, multiplier: 1, constant: 0)
         view.addConstraint(horizontalConstraintVideo)
         
-        verticalConstraintVideo = NSLayoutConstraint(item: recordButton, attribute: NSLayoutAttribute.centerY, relatedBy: NSLayoutRelation.equal, toItem: view, attribute: NSLayoutAttribute.centerY, multiplier: 1.0, constant: 0)
+        verticalConstraintVideo = NSLayoutConstraint(item: recordButton, attribute: NSLayoutConstraint.Attribute.centerY, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view, attribute: NSLayoutConstraint.Attribute.centerY, multiplier: 1.0, constant: 0)
         view.addConstraint(verticalConstraintVideo)
         
-        heightConstraintVideo = NSLayoutConstraint(item: recordButton, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal, toItem: view, attribute: NSLayoutAttribute.height, multiplier: 0.30, constant: 0)
+        heightConstraintVideo = NSLayoutConstraint(item: recordButton, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view, attribute: NSLayoutConstraint.Attribute.height, multiplier: 0.30, constant: 0)
         view.addConstraint(heightConstraintVideo)
         
         
-        horizontalConstraintAlbum = NSLayoutConstraint(item: albumButton, attribute: NSLayoutAttribute.centerX, relatedBy: NSLayoutRelation.equal, toItem: view, attribute: NSLayoutAttribute.centerX, multiplier: 1, constant: 0)
+        horizontalConstraintAlbum = NSLayoutConstraint(item: albumButton, attribute: NSLayoutConstraint.Attribute.centerX, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view, attribute: NSLayoutConstraint.Attribute.centerX, multiplier: 1, constant: 0)
         view.addConstraint(horizontalConstraintAlbum)
         
-        verticalConstraintAlbum = NSLayoutConstraint(item: albumButton, attribute: NSLayoutAttribute.centerY, relatedBy: NSLayoutRelation.equal, toItem: view, attribute: NSLayoutAttribute.centerY, multiplier: 1.66, constant: 0)
+        verticalConstraintAlbum = NSLayoutConstraint(item: albumButton, attribute: NSLayoutConstraint.Attribute.centerY, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view, attribute: NSLayoutConstraint.Attribute.centerY, multiplier: 1.66, constant: 0)
         view.addConstraint(verticalConstraintAlbum)
         
-        heightConstraintAlbum = NSLayoutConstraint(item: albumButton, attribute: NSLayoutAttribute.height, relatedBy: NSLayoutRelation.equal, toItem: view, attribute: NSLayoutAttribute.height, multiplier: 0.30, constant: 0)
+        heightConstraintAlbum = NSLayoutConstraint(item: albumButton, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: view, attribute: NSLayoutConstraint.Attribute.height, multiplier: 0.30, constant: 0)
         view.addConstraint(heightConstraintAlbum)
         
         rotatePortraitIcons = true
@@ -290,20 +295,20 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         let orientation: UIDeviceOrientation = UIDevice.current.orientation
         switch (orientation) {
         case .portrait:
-            videoPreviewLayer?.connection.videoOrientation = .portrait
+            videoPreviewLayer?.connection!.videoOrientation = .portrait
             countLabel.frame = CGRect(x:width * 0.4, y:-(width * 0.24), width:height/2, height:(width/2) * 1.25)
             videoPreviewLayer?.setAffineTransform(CGAffineTransform.init(rotationAngle:0))
         case .landscapeRight:
-            videoPreviewLayer?.connection.videoOrientation = .landscapeLeft
+            videoPreviewLayer?.connection!.videoOrientation = .landscapeLeft
             countLabel.frame = CGRect(x:width - countLabelMaxWidth - 5, y:-(width * 0.24), width:height/2, height:(width/2) * 1.25)
         case .landscapeLeft:
-            videoPreviewLayer?.connection.videoOrientation = .landscapeRight
+            videoPreviewLayer?.connection!.videoOrientation = .landscapeRight
             countLabel.frame = CGRect(x:width - countLabelMaxWidth - 5, y:-(width * 0.24), width:height/2, height:(width/2) * 1.25)
         case .portraitUpsideDown:
-            videoPreviewLayer?.connection.videoOrientation = .portraitUpsideDown
+            videoPreviewLayer?.connection!.videoOrientation = .portraitUpsideDown
             countLabel.frame = CGRect(x:width * 0.4, y:-(width * 0.24), width:height/2, height:(width/2) * 1.25)
         default:
-            videoPreviewLayer?.connection.videoOrientation = .portrait
+            videoPreviewLayer?.connection!.videoOrientation = .portrait
             countLabel.frame = CGRect(x:width * 0.4, y:-(width * 0.24), width:height/2, height:(width/2) * 1.25)
             
         }
@@ -344,14 +349,13 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         self.view.backgroundColor = UIColor.black
         
         // customize the quality level or bitrate of the output photo
-        session.sessionPreset = AVCaptureSessionPresetPhoto
+        session.sessionPreset = AVCaptureSession.Preset.photo
         
         // add the AVCaptureVideoPreviewLayer to the view and set the view in fullscreen
         fullScreenView.frame = view.bounds
         videoPreviewLayer.frame = fullScreenView.bounds
         fullScreenView.layer.addSublayer(videoPreviewLayer)
         //Emon
-         // addSwichCameraButton()
 //        self.switchCamera = UIButton(frame:CGRect(x:(self.view.frame.size.width-150),y:0,width: 150,height: 150))
 //        self.switchCamera.setImage(UIImage (named: "swap.png"), for: .normal)
 //        self.switchCamera.addTarget(self, action: #selector(swapCamera), for: .touchUpInside)
@@ -371,14 +375,14 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         if (preview == true) {
             self.setGesturePhoto = false
             
-            if let videoConnection = stillImageOutput!.connection(withMediaType: AVMediaTypeVideo) {
+            if let videoConnection = stillImageOutput!.connection(with: AVMediaType.video) {
                 // code for photo capture goes here...
                 
                 stillImageOutput?.captureStillImageAsynchronously(from: videoConnection, completionHandler: { (sampleBuffer, error) -> Void in
                     // process the image data (sampleBuffer) here to get an image file we can put in our view
                     
                     if (sampleBuffer != nil) {
-                        let imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(sampleBuffer)
+                        let imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(sampleBuffer!)
                         let image = UIImage(data: imageData!, scale: 1.0)
                         
                         
@@ -413,7 +417,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         }
     }
     
-    func swapCamera() {
+    @objc func swapCamera() {
         
         // Get current input
         input = session.inputs[0] as? AVCaptureDeviceInput
@@ -433,7 +437,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         // Create new capture input
         //videoInput : AVCaptureDeviceInput!
         do {
-            videoInput = try AVCaptureDeviceInput(device: newDevice)
+            videoInput = try AVCaptureDeviceInput(device: newDevice!)
         } catch let error {
             print(error.localizedDescription)
             return
@@ -451,18 +455,17 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
     
     
     
-    func captureDevice(with position: AVCaptureDevicePosition) -> AVCaptureDevice? {
+    func captureDevice(with position: AVCaptureDevice.Position) -> AVCaptureDevice? {
         
         if #available(iOS 10.2, *) {
-            let devices = AVCaptureDeviceDiscoverySession(deviceTypes: [ .builtInWideAngleCamera, .builtInMicrophone, .builtInDualCamera, .builtInTelephotoCamera ], mediaType: AVMediaTypeVideo, position: .unspecified).devices
+            let devices = AVCaptureDevice.DiscoverySession(deviceTypes: [ .builtInWideAngleCamera, .builtInMicrophone, .builtInDualCamera, .builtInTelephotoCamera ], mediaType: AVMediaType.video, position: .unspecified).devices
             
-            if let devices = devices {
                 for device in devices {
                     if device.position == position {
                         return device
                     }
                 }
-            }
+            
             
         } else {
             // Fallback on earlier versions
@@ -473,20 +476,20 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         return nil
     }
     
-    private func getImageOrientation() -> UIImageOrientation {
-        var orientation: UIImageOrientation!
+    private func getImageOrientation() -> UIImage.Orientation {
+        var orientation: UIImage.Orientation!
         
         // rotate the photo 90 degrees anticlockwise
         if UIDevice.current.orientation == UIDeviceOrientation.landscapeLeft {
-            orientation = UIImageOrientation.up
+            orientation = UIImage.Orientation.up
         } else if UIDevice.current.orientation == UIDeviceOrientation.landscapeRight {
-            orientation = UIImageOrientation.down
+            orientation = UIImage.Orientation.down
         } else if UIDevice.current.orientation == UIDeviceOrientation.portrait {
-            orientation = UIImageOrientation.right
+            orientation = UIImage.Orientation.right
         } else if UIDevice.current.orientation == UIDeviceOrientation.portraitUpsideDown {
-            orientation = UIImageOrientation.left
+            orientation = UIImage.Orientation.left
         } else {
-            orientation = UIImageOrientation.down
+            orientation = UIImage.Orientation.down
         }
         
         return orientation
@@ -509,7 +512,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         self.view.backgroundColor = UIColor.black
         
         // customize the quality level or bitrate of the output video
-        session.sessionPreset = AVCaptureSessionPresetHigh
+        session.sessionPreset = AVCaptureSession.Preset.high
         
         // add AVCaptureVideoPreviewLayer to the view and set the view in fullscreen
         fullScreenView.frame = view.bounds
@@ -550,12 +553,12 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
             let documentsURL = FileManager.default.urls(for:.documentDirectory, in: .userDomainMask)[0]
             let filePath = documentsURL.appendingPathComponent(saveFileName)
             
-            let connection = videoFileOutput.connection(withMediaType:AVMediaTypeVideo)
+            let connection = videoFileOutput.connection(with:AVMediaType.video)
             
             // start recording and save the output to the `filePath`
             connection!.videoOrientation = getVideoOrientation()
-            videoFileOutput.movieFragmentInterval = kCMTimeInvalid
-            videoFileOutput.startRecording(toOutputFileURL: filePath, recordingDelegate: recordingDelegate)
+            videoFileOutput.movieFragmentInterval = CMTime.invalid
+            videoFileOutput.startRecording(to: filePath, recordingDelegate: recordingDelegate as! AVCaptureFileOutputRecordingDelegate)
         }
         else {
             preview = true
@@ -575,31 +578,39 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
             print("Portrait")
         }
         
-        addSwichCameraButton()
-        showSwitchCameraButton()
+          addSwichCameraButton()
     }
     
     func  addSwichCameraButton(){
         
         if isSwitchCamHidden {
-            return 
+            return
         }
         if self.switchCamera != nil {
             //return
             self.switchCamera.removeFromSuperview()
         }
         
-        
 //        do {
 //            self.switchCamera.removeFromSuperview()
 //        } catch {
-//
 //        }
-        
-        
-        
+
         //Emon
-        self.switchCamera = UIButton(frame:CGRect(x:(self.view.bounds.size.width-150),y:0,width: 150,height: 150))
+        
+     
+        
+        if UIDevice.current.orientation == UIDeviceOrientation.portrait {
+            if isFirstRun {
+                isFirstRun = false
+                self.switchCamera = UIButton(frame:CGRect(x:self.view.bounds.size.width - 150,y:0,width: 150,height: 150))
+            } else {
+                self.switchCamera = UIButton(frame:CGRect(x:(self.view.bounds.size.height - 150),y:0,width: 150,height: 150))
+            }
+        } else {
+            self.switchCamera = UIButton(frame:CGRect(x:(self.view.bounds.size.height - 150),y:0,width: 150,height: 150))
+        }
+        
         self.switchCamera.setImage(UIImage (named: "swap.png"), for: .normal)
         self.switchCamera.addTarget(self, action: #selector(swapCamera), for: .touchUpInside)
         self.switchCamera.removeFromSuperview()
@@ -632,7 +643,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
     
     // update the time label and afterwards repeat the video until
     // the user taps on the screen
-    func update() {
+    @objc func update() {
         //Emon
         hideSwitchCameraButton()
         if(count < 10) {
@@ -673,7 +684,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
             playerLayer = AVPlayerLayer.init(player: self.player)
             playerLayer.frame = view.bounds
             
-            playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
+            playerLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
             view.layer.addSublayer(playerLayer)
             player.play()
             // is true if the player recorded a 10 sec video
@@ -858,7 +869,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
                 self.playerLayerAlbum = AVPlayerLayer.init(player: self.playerAlbum)
                 self.playerLayerAlbum.frame = self.view.bounds
                 
-                self.playerLayerAlbum.videoGravity = AVLayerVideoGravityResizeAspectFill
+                self.playerLayerAlbum.videoGravity = AVLayerVideoGravity.resizeAspectFill
                 self.fullScreenView.layer.insertSublayer(self.playerLayerAlbum, at:1)
                 self.playerAlbum.play()
                 
@@ -877,7 +888,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
             }
         }
     }
-    func updateAlbumTimer(){
+    @objc func updateAlbumTimer(){
         
         if(self.countAlbumVideo > 1) {
             //update flag
@@ -897,14 +908,14 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         }
     }
     // repeat playing
-    func playerItemDidReachEnd(notification: NSNotification) {
-        self.player.seek(to:kCMTimeZero)
+    @objc func playerItemDidReachEnd(notification: NSNotification) {
+        self.player.seek(to:CMTime.zero)
         self.player.play()
     }
     
     // if you tap on the screen while watching the replay of the video or the taken photo
     // this function will be executed
-    func setFrontpage(sender: UITapGestureRecognizer){
+    @objc func setFrontpage(sender: UITapGestureRecognizer){
         self.recordButton.isEnabled = true
         self.recordButton.isHidden = false
         self.takephoto.isEnabled = true
@@ -975,7 +986,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         self.playerLayerAlbum?.removeFromSuperlayer()
     }
     
-    func controlViewDidTapped(){
+    @objc func controlViewDidTapped(){
         print(self.countAlbumVideo)
         if (self.countAlbumVideo <= 10 && self.countAlbumVideo>=1){
             //check playe state
@@ -1004,7 +1015,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         }
     }
     
-    func handleGesture(gesture: UISwipeGestureRecognizer) -> Void {
+    @objc func handleGesture(gesture: UISwipeGestureRecognizer) -> Void {
         if self.imageVideoArray.count<1{
             return
         }
@@ -1018,12 +1029,12 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         
         var ischange: Bool!
         ischange = false
-        if (gesture.direction == UISwipeGestureRecognizerDirection.right &&
+        if (gesture.direction == UISwipeGestureRecognizer.Direction.right &&
             (UserDefaults.standard.integer(forKey: "album_counter")-1) >= 0 &&
             (UserDefaults.standard.integer(forKey: "album_counter")-1) < self.imageVideoArray.count){
             ischange = true
             UserDefaults.standard.set((UserDefaults.standard.integer(forKey: "album_counter")-1), forKey: "album_counter")
-        }else if (gesture.direction == UISwipeGestureRecognizerDirection.left &&
+        }else if (gesture.direction == UISwipeGestureRecognizer.Direction.left &&
             (UserDefaults.standard.integer(forKey: "album_counter")+1) < self.imageVideoArray.count ){
             ischange = true
             UserDefaults.standard.set((UserDefaults.standard.integer(forKey: "album_counter")+1), forKey: "album_counter")
