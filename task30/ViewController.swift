@@ -144,32 +144,32 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         
         
         var error: NSError?
-//        do {
-//            audioInput = try AVCaptureDeviceInput(device: microphone)
-//            videoInput = try AVCaptureDeviceInput(device: camera)
-//        } catch let error1 as NSError {
-//            error = error1
-//            audioInput = nil
-//            videoInput = nil
-//            print(error!.localizedDescription)
-//        }
-//        
-//        if (error == nil && session.canAddInput(videoInput)) {
-//            self.session.addInput(videoInput)
-//            self.session.addOutput(videoFileOutput)
-//            // the remainder of the session setup will go here...
-//            
-//            self.stillImageOutput = AVCaptureStillImageOutput()
-//            self.stillImageOutput?.outputSettings = [AVVideoCodecKey: AVVideoCodecJPEG]
-//            
-//            if (session.canAddOutput(stillImageOutput)) {
-//                self.session.addOutput(stillImageOutput)
-//                
-//                // configure the Live Preview here...
-//                self.videoPreviewLayer = AVCaptureVideoPreviewLayer(session: session)
-//                self.videoPreviewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
-//            }
-//        }
+        do {
+            audioInput = try AVCaptureDeviceInput(device: microphone)
+            videoInput = try AVCaptureDeviceInput(device: camera)
+        } catch let error1 as NSError {
+            error = error1
+            audioInput = nil
+            videoInput = nil
+            print(error!.localizedDescription)
+        }
+        
+        if (error == nil && session.canAddInput(videoInput)) {
+            self.session.addInput(videoInput)
+            self.session.addOutput(videoFileOutput)
+            // the remainder of the session setup will go here...
+            
+            self.stillImageOutput = AVCaptureStillImageOutput()
+            self.stillImageOutput?.outputSettings = [AVVideoCodecKey: AVVideoCodecJPEG]
+            
+            if (session.canAddOutput(stillImageOutput)) {
+                self.session.addOutput(stillImageOutput)
+                
+                // configure the Live Preview here...
+                self.videoPreviewLayer = AVCaptureVideoPreviewLayer(session: session)
+                self.videoPreviewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
+            }
+        }
         
         
     }
